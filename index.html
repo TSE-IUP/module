@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pembelajaran Online - International University of Papua</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .login-section {
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid #3498db;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .login-title {
+            color: #2c3e50;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .admin-controls {
+            display: none;
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid #e74c3c;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .login-btn, .admin-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover, .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .main-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #7f8c8d;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: rgba(52, 152, 219, 0.1);
+            color: #2980b9;
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .announcement-card {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(116, 185, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .announcement-date {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .announcement-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #3498db;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .course-info {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .course-description {
+            color: #5a6c7d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .course-btn {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .course-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .schedule-table th {
+            background: linear-gradient(45deg, #6c5ce7, #5f3dc4);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .schedule-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .schedule-table tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .time-slot {
+            font-weight: 600;
+            color: #6c5ce7;
+        }
+
+        .edit-form {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .save-btn, .add-btn {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .save-btn:hover, .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+        }
+
+        .delete-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .course-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 90vh;
+            width: 90%;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
+        .module-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .module-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .file-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .file-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                min-width: 100%;
+            }
+            
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .schedule-table {
+                font-size: 14px;
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎓 Sistem Pembelajaran Online</h1>
+            <div class="subtitle">Energy System Engineering - International University of Papua</div>
+            
+            <div class="login-section">
+                <div class="login-title">Masuk sebagai Mahasiswa/Dosen</div>
+                <input type="password" class="password-input" id="studentPassword" placeholder="Masukkan kata sandi mahasiswa">
+                <button class="login-btn" onclick="loginStudent()">Masuk</button>
+            </div>
+            
+            <div class="admin-controls" id="adminControls">
+                <div class="login-title">Panel Admin - Edit Konten</div>
+                <p style="color: #7f8c8d; margin-bottom: 15px;">Mode admin aktif. Anda dapat mengedit semua konten.</p>
+                <button class="admin-btn" onclick="toggleAdminMode()">Keluar dari Mode Admin</button>
+            </div>
+        </div>
+
+        <!-- Logout Button -->
+        <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">Keluar</button>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('announcements')">📢 Pengumuman</button>
+                <button class="nav-tab" onclick="showSection('schedule')">📅 Jadwal Kuliah</button>
+                <button class="nav-tab" onclick="showSection('courses')">📚 Mata Kuliah</button>
+            </div>
+
+            <!-- Announcements Section -->
+            <div class="content-section active" id="announcements">
+                <h2 class="section-title">📢 Pengumuman Terbaru</h2>
+                
+                <div class="edit-form" id="announcementForm" style="display: none;">
+                    <h3>Tambah/Edit Pengumuman</h3>
+                    <div class="form-group">
+                        <label class="form-label">Judul Pengumuman</label>
+                        <input type="text" class="form-input" id="announcementTitle" placeholder="Masukkan judul pengumuman">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Isi Pengumuman</label>
+                        <textarea class="form-textarea" id="announcementContent" placeholder="Masukkan isi pengumuman"></textarea>
+                    </div>
+                    <button class="save-btn" onclick="saveAnnouncement()">Simpan Pengumuman</button>
+                    <button class="add-btn" onclick="cancelEdit()">Batal</button>
+                </div>
+
+                <div id="announcementsList">
+                    <div class="announcement-card">
+                        <div class="announcement-date">5 September 2025</div>
+                        <div class="announcement-title">Selamat Datang di Semester Baru!</div>
+                        <div class="announcement-content">
+                            Selamat datang mahasiswa baru dan lama di semester ganjil 2025/2026. Silakan periksa jadwal kuliah dan unduh materi pembelajaran yang tersedia.
+                        </div>
+                        <button class="delete-btn" onclick="deleteAnnouncement(this)" style="display: none;">Hapus</button>
+                    </div>
+                    
+                    <div class="announcement-card">
+                        <div class="announcement-date">3 September 2025</div>
+                        <div class="announcement-title">Pengumpulan Tugas Akhir</div>
+                        <div class="announcement-content">
+                            Batas pengumpulan tugas akhir untuk mata kuliah Metodologi Penelitian adalah tanggal 15 September 2025. Pastikan format sudah sesuai dengan panduan.
+                        </div>
+                        <button class="delete-btn" onclick="deleteAnnouncement(this)" style="display: none;">Hapus</button>
+                    </div>
+                </div>
+
+                <button class="add-btn" id="addAnnouncementBtn" onclick="showAnnouncementForm()" style="display: none; margin-top: 20px;">+ Tambah Pengumuman</button>
+            </div>
+
+            <!-- Schedule Section -->
+            <div class="content-section" id="schedule">
+                <h2 class="section-title">📅 Jadwal Kuliah Mingguan</h2>
+                
+                <div class="edit-form" id="scheduleForm" style="display: none;">
+                    <h3>Tambah/Edit Jadwal</h3>
+                    <div class="form-group">
+                        <label class="form-label">Hari</label>
+                        <select class="form-select" id="scheduleDay">
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu</label>
+                        <input type="text" class="form-input" id="scheduleTime" placeholder="08:00 - 09:40">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mata Kuliah</label>
+                        <input type="text" class="form-input" id="scheduleCourse" placeholder="Nama mata kuliah">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ruangan</label>
+                        <input type="text" class="form-input" id="scheduleRoom" placeholder="Ruang kelas">
+                    </div>
+                    <button class="save-btn" onclick="saveSchedule()">Simpan Jadwal</button>
+                    <button class="add-btn" onclick="cancelScheduleEdit()">Batal</button>
+                </div>
+
+                <table class="schedule-table" id="scheduleTable">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Waktu</th>
+                            <th>Mata Kuliah</th>
+                            <th>Ruangan</th>
+                            <th class="admin-only" style="display: none;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Senin</td>
+                            <td class="time-slot">08:00 - 09:40</td>
+                            <td>Metodologi Penelitian</td>
+                            <td>Ruang A101</td>
+                            <td class="admin-only" style="display: none;">
+                                <button class="delete-btn" onclick="deleteSchedule(this)">Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Senin</td>
+                            <td class="time-slot">10:00 - 11:40</td>
+                            <td>Statistika Dasar</td>
+                            <td>Lab Komputer B</td>
+                            <td class="admin-only" style="display: none;">
+                                <button class="delete-btn" onclick="deleteSchedule(this)">Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Selasa</td>
+                            <td class="time-slot">08:00 - 09:40</td>
+                            <td>Ekonomi Pembangunan</td>
+                            <td>Ruang A102</td>
+                            <td class="admin-only" style="display: none;">
+                                <button class="delete-btn" onclick="deleteSchedule(this)">Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Rabu</td>
+                            <td class="time-slot">10:00 - 11:40</td>
+                            <td>Kewirausahaan</td>
+                            <td>Ruang A103</td>
+                            <td class="admin-only" style="display: none;">
+                                <button class="delete-btn" onclick="deleteSchedule(this)">Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Kamis</td>
+                            <td class="time-slot">13:00 - 14:40</td>
+                            <td>Bahasa Inggris Akademik</td>
+                            <td>Ruang A104</td>
+                            <td class="admin-only" style="display: none;">
+                                <button class="delete-btn" onclick="deleteSchedule(this)">Hapus</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="add-btn" id="addScheduleBtn" onclick="showScheduleForm()" style="display: none; margin-top: 20px;">+ Tambah Jadwal</button>
+            </div>
+
+            <!-- Courses Section -->
+            <div class="content-section" id="courses">
+                <h2 class="section-title">📚 Mata Kuliah & Materi</h2>
+                
+                <div class="edit-form" id="courseForm" style="display: none;">
+                    <h3>Tambah/Edit Mata Kuliah</h3>
+                    <div class="form-group">
+                        <label class="form-label">Nama Mata Kuliah</label>
+                        <input type="text" class="form-input" id="courseName" placeholder="Nama mata kuliah">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kode Mata Kuliah</label>
+                        <input type="text" class="form-input" id="courseCode" placeholder="Kode mata kuliah">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dosen Pengampu</label>
+                        <input type="text" class="form-input" id="courseLecturer" placeholder="Nama dosen">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi</label>
+                        <textarea class="form-textarea" id="courseDescription" placeholder="Deskripsi mata kuliah"></textarea>
+                    </div>
+                    <button class="save-btn" onclick="saveCourse()">Simpan Mata Kuliah</button>
+                    <button class="add-btn" onclick="cancelCourseEdit()">Batal</button>
+                </div>
+
+                <div class="course-grid" id="courseGrid">
+                    <div class="course-card">
+                        <div class="course-title">Metodologi Penelitian</div>
+                        <div class="course-info">MTP301 • Prof. Dr. Ahmad Wijaya, M.Si</div>
+                        <div class="course-description">
+                            Mata kuliah ini membahas konsep dasar penelitian, metode penelitian kuantitatif dan kualitatif, serta teknik penulisan karya ilmiah.
+                        </div>
+                        <button class="course-btn" onclick="openCourse('metodologi-penelitian')">Akses Materi</button>
+                        <button class="delete-btn" onclick="deleteCourse(this)" style="display: none; margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-title">Statistika Dasar</div>
+                        <div class="course-info">STA201 • Dr. Sari Indrawati, M.Stat</div>
+                        <div class="course-description">
+                            Pengenalan konsep dasar statistika, analisis deskriptif, probabilitas, dan inferensi statistik untuk penelitian sosial.
+                        </div>
+                        <button class="course-btn" onclick="openCourse('statistika-dasar')">Akses Materi</button>
+                        <button class="delete-btn" onclick="deleteCourse(this)" style="display: none; margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-title">Ekonomi Pembangunan</div>
+                        <div class="course-info">EKP202 • Prof. Dr. Budi Santoso, M.Ec</div>
+                        <div class="course-description">
+                            Studi tentang teori pertumbuhan ekonomi, strategi pembangunan, dan analisis kebijakan pembangunan di Indonesia.
+                        </div>
+                        <button class="course-btn" onclick="openCourse('ekonomi-pembangunan')">Akses Materi</button>
+                        <button class="delete-btn" onclick="deleteCourse(this)" style="display: none; margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-title">Kewirausahaan</div>
+                        <div class="course-info">KWU301 • Dr. Maya Kusuma, M.M</div>
+                        <div class="course-description">
+                            Pengembangan jiwa entrepreneur, analisis peluang bisnis, penyusunan business plan, dan strategi pemasaran untuk UMKM.
+                        </div>
+                        <button class="course-btn" onclick="openCourse('kewirausahaan')">Akses Materi</button>
+                        <button class="delete-btn" onclick="deleteCourse(this)" style="display: none; margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-title">Bahasa Inggris Akademik</div>
+                        <div class="course-info">BIA101 • Dra. Linda Maharani, M.A</div>
+                        <div class="course-description">
+                            Pengembangan kemampuan bahasa Inggris untuk keperluan akademik, penulisan paper, dan presentasi ilmiah.
+                        </div>
+                        <button class="course-btn" onclick="openCourse('bahasa-inggris-akademik')">Akses Materi</button>
+                        <button class="delete-btn" onclick="deleteCourse(this)" style="display: none; margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>
+                    </div>
+                </div>
+
+                <button class="add-btn" id="addCourseBtn" onclick="showCourseForm()" style="display: none; margin-top: 20px;">+ Tambah Mata Kuliah</button>
+            </div>
+        </div>
+
+        <!-- Course Modal -->
+        <div class="course-modal" id="courseModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Detail Mata Kuliah</h2>
+                    <button class="close-btn" onclick="closeCourseModal()">&times;</button>
+                </div>
+                
+                <div id="courseContent">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+                
+                <div class="edit-form" id="moduleForm" style="display: none;">
+                    <h3>Tambah/Edit Modul</h3>
+                    <div class="form-group">
+                        <label class="form-label">Judul Modul</label>
+                        <input type="text" class="form-input" id="moduleTitle" placeholder="Judul modul">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi Modul</label>
+                        <textarea class="form-textarea" id="moduleDescription" placeholder="Deskripsi modul"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">File/Link Referensi</label>
+                        <input type="text" class="form-input" id="moduleFile" placeholder="Link ke file atau referensi">
+                    </div>
+                    <button class="save-btn" onclick="saveModule()">Simpan Modul</button>
+                    <button class="add-btn" onclick="cancelModuleEdit()">Batal</button>
+                </div>
+                
+                <button class="add-btn" id="addModuleBtn" onclick="showModuleForm()" style="display: none; margin-top: 20px;">+ Tambah Modul</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let isAdminMode = false;
+        let isLoggedIn = false;
+        let currentCourse = '';
+        let editingAnnouncementIndex = -1;
+        let editingCourseIndex = -1;
+        let editingModuleIndex = -1;
+
+        // Course data structure
+        let courseData = {
+            'metodologi-penelitian': {
+                title: 'Metodologi Penelitian',
+                code: 'MTP301',
+                lecturer: 'Prof. Dr. Ahmad Wijaya, M.Si',
+                modules: [
+                    {
+                        title: 'Pengantar Metodologi Penelitian',
+                        description: 'Konsep dasar penelitian, jenis-jenis penelitian, dan paradigma penelitian.',
+                        file: 'Modul_1_Pengantar_Metodologi.pdf'
+                    },
+                    {
+                        title: 'Merumuskan Masalah Penelitian',
+                        description: 'Teknik identifikasi masalah, perumusan masalah, dan penetapan tujuan penelitian.',
+                        file: 'Modul_2_Rumusan_Masalah.pdf'
+                    },
+                    {
+                        title: 'Tinjauan Pustaka dan Kerangka Teori',
+                        description: 'Cara mencari literature, analisis pustaka, dan pembangunan kerangka teoritis.',
+                        file: 'Modul_3_Tinjauan_Pustaka.pdf'
+                    },
+                    {
+                        title: 'Metode Penelitian Kuantitatif',
+                        description: 'Desain penelitian kuantitatif, sampling, dan instrumen penelitian.',
+                        file: 'Modul_4_Metode_Kuantitatif.pdf'
+                    },
+                    {
+                        title: 'Metode Penelitian Kualitatif',
+                        description: 'Pendekatan kualitatif, teknik pengumpulan data, dan analisis data kualitatif.',
+                        file: 'Modul_5_Metode_Kualitatif.pdf'
+                    }
+                ]
+            },
+            'statistika-dasar': {
+                title: 'Statistika Dasar',
+                code: 'STA201',
+                lecturer: 'Dr. Sari Indrawati, M.Stat',
+                modules: [
+                    {
+                        title: 'Pengantar Statistika',
+                        description: 'Definisi statistika, populasi, sampel, dan jenis-jenis data.',
+                        file: 'Modul_1_Pengantar_Statistika.pdf'
+                    },
+                    {
+                        title: 'Statistika Deskriptif',
+                        description: 'Ukuran pemusatan, penyebaran, dan visualisasi data.',
+                        file: 'Modul_2_Statistika_Deskriptif.pdf'
+                    },
+                    {
+                        title: 'Distribusi Probabilitas',
+                        description: 'Konsep probabilitas, distribusi normal, dan distribusi sampling.',
+                        file: 'Modul_3_Distribusi_Probabilitas.pdf'
+                    },
+                    {
+                        title: 'Estimasi Parameter',
+                        description: 'Estimasi titik, estimasi interval, dan confidence interval.',
+                        file: 'Modul_4_Estimasi_Parameter.pdf'
+                    },
+                    {
+                        title: 'Uji Hipotesis',
+                        description: 'Konsep uji hipotesis, uji satu sampel, dan uji dua sampel.',
+                        file: 'Modul_5_Uji_Hipotesis.pdf'
+                    }
+                ]
+            },
+            'ekonomi-pembangunan': {
+                title: 'Ekonomi Pembangunan',
+                code: 'EKP202',
+                lecturer: 'Prof. Dr. Budi Santoso, M.Ec',
+                modules: [
+                    {
+                        title: 'Konsep Dasar Pembangunan Ekonomi',
+                        description: 'Definisi pembangunan, pertumbuhan ekonomi, dan indikator pembangunan.',
+                        file: 'Modul_1_Konsep_Pembangunan.pdf'
+                    },
+                    {
+                        title: 'Teori Pertumbuhan Ekonomi',
+                        description: 'Model Solow, teori pertumbuhan endogen, dan faktor-faktor pertumbuhan.',
+                        file: 'Modul_2_Teori_Pertumbuhan.pdf'
+                    },
+                    {
+                        title: 'Kemiskinan dan Ketimpangan',
+                        description: 'Pengukuran kemiskinan, penyebab ketimpangan, dan kebijakan pengentasan.',
+                        file: 'Modul_3_Kemiskinan_Ketimpangan.pdf'
+                    },
+                    {
+                        title: 'Pembangunan Sumber Daya Manusia',
+                        description: 'Investasi pendidikan, kesehatan, dan hubungannya dengan pertumbuhan ekonomi.',
+                        file: 'Modul_4_SDM.pdf'
+                    },
+                    {
+                        title: 'Pembangunan Berkelanjutan',
+                        description: 'Konsep sustainability, green economy, dan pembangunan berwawasan lingkungan.',
+                        file: 'Modul_5_Berkelanjutan.pdf'
+                    }
+                ]
+            },
+            'kewirausahaan': {
+                title: 'Kewirausahaan',
+                code: 'KWU301',
+                lecturer: 'Dr. Maya Kusuma, M.M',
+                modules: [
+                    {
+                        title: 'Konsep Kewirausahaan',
+                        description: 'Definisi entrepreneur, karakteristik wirausaha, dan ekosistem kewirausahaan.',
+                        file: 'Modul_1_Konsep_Kewirausahaan.pdf'
+                    },
+                    {
+                        title: 'Identifikasi Peluang Bisnis',
+                        description: 'Teknik pencarian peluang, analisis pasar, dan evaluasi kelayakan bisnis.',
+                        file: 'Modul_2_Peluang_Bisnis.pdf'
+                    },
+                    {
+                        title: 'Business Model Canvas',
+                        description: 'Penggunaan BMC untuk merancang model bisnis yang berkelanjutan.',
+                        file: 'Modul_3_Business_Model_Canvas.pdf'
+                    },
+                    {
+                        title: 'Perencanaan Bisnis',
+                        description: 'Penyusunan business plan, proyeksi keuangan, dan strategi pemasaran.',
+                        file: 'Modul_4_Business_Plan.pdf'
+                    },
+                    {
+                        title: 'Manajemen Keuangan Usaha',
+                        description: 'Pengelolaan cash flow, sumber pendanaan, dan analisis investasi.',
+                        file: 'Modul_5_Manajemen_Keuangan.pdf'
+                    }
+                ]
+            },
+            'bahasa-inggris-akademik': {
+                title: 'Bahasa Inggris Akademik',
+                code: 'BIA101',
+                lecturer: 'Dra. Linda Maharani, M.A',
+                modules: [
+                    {
+                        title: 'Academic Writing Basics',
+                        description: 'Structure of academic writing, paragraph development, and coherence.',
+                        file: 'Module_1_Academic_Writing_Basics.pdf'
+                    },
+                    {
+                        title: 'Research Paper Writing',
+                        description: 'Introduction, literature review, methodology, and conclusion writing.',
+                        file: 'Module_2_Research_Paper.pdf'
+                    },
+                    {
+                        title: 'Citation and Referencing',
+                        description: 'APA style, in-text citations, and reference list formatting.',
+                        file: 'Module_3_Citation_Referencing.pdf'
+                    },
+                    {
+                        title: 'Academic Presentation Skills',
+                        description: 'Presentation structure, visual aids, and public speaking techniques.',
+                        file: 'Module_4_Presentation_Skills.pdf'
+                    },
+                    {
+                        title: 'Critical Reading and Analysis',
+                        description: 'Reading strategies, critical thinking, and text analysis.',
+                        file: 'Module_5_Critical_Reading.pdf'
+                    }
+                ]
+            }
+        };
+
+        // Login functions
+        function loginStudent() {
+            const password = document.getElementById('studentPassword').value;
+            if (password === 'mahasiswa123' || password === 'admin123') {
+                isLoggedIn = true;
+                if (password === 'admin123') {
+                    isAdminMode = true;
+                    showAdminControls();
+                }
+                showMainContent();
+                document.getElementById('studentPassword').value = '';
+            } else {
+                alert('Kata sandi salah! Gunakan "mahasiswa123" untuk masuk sebagai mahasiswa atau "admin123" untuk masuk sebagai admin.');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            isAdminMode = false;
+            hideMainContent();
+            hideAdminControls();
+        }
+
+        function showMainContent() {
+            document.querySelector('.header').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+        }
+
+        function hideMainContent() {
+            document.querySelector('.header').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+        }
+
+        function toggleAdminMode() {
+            if (isAdminMode) {
+                isAdminMode = false;
+                hideAdminControls();
+            } else {
+                const password = prompt('Masukkan kata sandi admin:');
+                if (password === 'admin123') {
+                    isAdminMode = true;
+                    showAdminControls();
+                } else {
+                    alert('Kata sandi admin salah!');
+                }
+            }
+        }
+
+        function showAdminControls() {
+            document.getElementById('adminControls').style.display = 'block';
+            
+            // Show admin elements
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = 'table-cell';
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(el => {
+                el.style.display = 'inline-block';
+            });
+            
+            document.getElementById('addAnnouncementBtn').style.display = 'block';
+            document.getElementById('addScheduleBtn').style.display = 'block';
+            document.getElementById('addCourseBtn').style.display = 'block';
+        }
+
+        function hideAdminControls() {
+            document.getElementById('adminControls').style.display = 'none';
+            
+            // Hide admin elements
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            document.getElementById('addAnnouncementBtn').style.display = 'none';
+            document.getElementById('addScheduleBtn').style.display = 'none';
+            document.getElementById('addCourseBtn').style.display = 'none';
+            
+            // Hide forms
+            document.getElementById('announcementForm').style.display = 'none';
+            document.getElementById('scheduleForm').style.display = 'none';
+            document.getElementById('courseForm').style.display = 'none';
+        }
+
+        // Navigation functions
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Announcement functions
+        function showAnnouncementForm() {
+            document.getElementById('announcementForm').style.display = 'block';
+            editingAnnouncementIndex = -1;
+            clearAnnouncementForm();
+        }
+
+        function clearAnnouncementForm() {
+            document.getElementById('announcementTitle').value = '';
+            document.getElementById('announcementContent').value = '';
+        }
+
+        function saveAnnouncement() {
+            const title = document.getElementById('announcementTitle').value;
+            const content = document.getElementById('announcementContent').value;
+            
+            if (!title || !content) {
+                alert('Harap isi semua field!');
+                return;
+            }
+            
+            const today = new Date().toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            
+            const announcementHtml = `
+                <div class="announcement-card">
+                    <div class="announcement-date">${today}</div>
+                    <div class="announcement-title">${title}</div>
+                    <div class="announcement-content">${content}</div>
+                    <button class="delete-btn" onclick="deleteAnnouncement(this)" ${isAdminMode ? '' : 'style="display: none;"'}>Hapus</button>
+                </div>
+            `;
+            
+            document.getElementById('announcementsList').insertAdjacentHTML('afterbegin', announcementHtml);
+            clearAnnouncementForm();
+            document.getElementById('announcementForm').style.display = 'none';
+        }
+
+        function deleteAnnouncement(button) {
+            if (confirm('Yakin ingin menghapus pengumuman ini?')) {
+                button.closest('.announcement-card').remove();
+            }
+        }
+
+        function cancelEdit() {
+            document.getElementById('announcementForm').style.display = 'none';
+            clearAnnouncementForm();
+        }
+
+        // Schedule functions
+        function showScheduleForm() {
+            document.getElementById('scheduleForm').style.display = 'block';
+            clearScheduleForm();
+        }
+
+        function clearScheduleForm() {
+            document.getElementById('scheduleDay').value = 'Senin';
+            document.getElementById('scheduleTime').value = '';
+            document.getElementById('scheduleCourse').value = '';
+            document.getElementById('scheduleRoom').value = '';
+        }
+
+        function saveSchedule() {
+            const day = document.getElementById('scheduleDay').value;
+            const time = document.getElementById('scheduleTime').value;
+            const course = document.getElementById('scheduleCourse').value;
+            const room = document.getElementById('scheduleRoom').value;
+            
+            if (!time || !course || !room) {
+                alert('Harap isi semua field!');
+                return;
+            }
+            
+            const scheduleHtml = `
+                <tr>
+                    <td>${day}</td>
+                    <td class="time-slot">${time}</td>
+                    <td>${course}</td>
+                    <td>${room}</td>
+                    <td class="admin-only" ${isAdminMode ? '' : 'style="display: none;"'}>
+                        <button class="delete-btn" onclick="deleteSchedule(this)">Hapus</button>
+                    </td>
+                </tr>
+            `;
+            
+            document.querySelector('#scheduleTable tbody').insertAdjacentHTML('beforeend', scheduleHtml);
+            clearScheduleForm();
+            document.getElementById('scheduleForm').style.display = 'none';
+        }
+
+        function deleteSchedule(button) {
+            if (confirm('Yakin ingin menghapus jadwal ini?')) {
+                button.closest('tr').remove();
+            }
+        }
+
+        function cancelScheduleEdit() {
+            document.getElementById('scheduleForm').style.display = 'none';
+            clearScheduleForm();
+        }
+
+        // Course functions
+        function showCourseForm() {
+            document.getElementById('courseForm').style.display = 'block';
+            editingCourseIndex = -1;
+            clearCourseForm();
+        }
+
+        function clearCourseForm() {
+            document.getElementById('courseName').value = '';
+            document.getElementById('courseCode').value = '';
+            document.getElementById('courseLecturer').value = '';
+            document.getElementById('courseDescription').value = '';
+        }
+
+        function saveCourse() {
+            const name = document.getElementById('courseName').value;
+            const code = document.getElementById('courseCode').value;
+            const lecturer = document.getElementById('courseLecturer').value;
+            const description = document.getElementById('courseDescription').value;
+            
+            if (!name || !code || !lecturer || !description) {
+                alert('Harap isi semua field!');
+                return;
+            }
+            
+            const courseId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            
+            // Add to courseData
+            courseData[courseId] = {
+                title: name,
+                code: code,
+                lecturer: lecturer,
+                modules: []
+            };
+            
+            const courseHtml = `
+                <div class="course-card">
+                    <div class="course-title">${name}</div>
+                    <div class="course-info">${code} • ${lecturer}</div>
+                    <div class="course-description">${description}</div>
+                    <button class="course-btn" onclick="openCourse('${courseId}')">Akses Materi</button>
+                    <button class="delete-btn" onclick="deleteCourse(this)" ${isAdminMode ? '' : 'style="display: none;"'} style="margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>
+                </div>
+            `;
+            
+            document.getElementById('courseGrid').insertAdjacentHTML('beforeend', courseHtml);
+            clearCourseForm();
+            document.getElementById('courseForm').style.display = 'none';
+        }
+
+        function deleteCourse(button) {
+            if (confirm('Yakin ingin menghapus mata kuliah ini?')) {
+                button.closest('.course-card').remove();
+            }
+        }
+
+        function cancelCourseEdit() {
+            document.getElementById('courseForm').style.display = 'none';
+            clearCourseForm();
+        }
+
+        function openCourse(courseId) {
+            currentCourse = courseId;
+            const course = courseData[courseId];
+            
+            if (!course) {
+                alert('Data mata kuliah tidak ditemukan!');
+                return;
+            }
+            
+            document.getElementById('modalTitle').textContent = course.title;
+            
+            let contentHtml = `
+                <div style="margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3>Informasi Mata Kuliah</h3>
+                    <p><strong>Kode:</strong> ${course.code}</p>
+                    <p><strong>Dosen Pengampu:</strong> ${course.lecturer}</p>
+                </div>
+                
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">📖 Modul Pembelajaran</h3>
+            `;
+            
+            if (course.modules && course.modules.length > 0) {
+                course.modules.forEach((module, index) => {
+                    contentHtml += `
+                        <div class="module-item">
+                            <div class="module-title">${module.title}</div>
+                            <div style="margin-bottom: 10px; color: #5a6c7d;">${module.description}</div>
+                            <a href="#" class="file-link" onclick="downloadFile('${module.file}')">${module.file}</a>
+                            ${isAdminMode ? `<button class="delete-btn" onclick="deleteModule(${index})" style="float: right;">Hapus</button>` : ''}
+                        </div>
+                    `;
+                });
+            } else {
+                contentHtml += '<div style="text-align: center; color: #7f8c8d; padding: 40px;">Belum ada modul yang tersedia.</div>';
+            }
+            
+            document.getElementById('courseContent').innerHTML = contentHtml;
+            document.getElementById('addModuleBtn').style.display = isAdminMode ? 'block' : 'none';
+            document.getElementById('courseModal').style.display = 'block';
+        }
+
+        function closeCourseModal() {
+            document.getElementById('courseModal').style.display = 'none';
+            document.getElementById('moduleForm').style.display = 'none';
+            currentCourse = '';
+        }
+
+        function downloadFile(filename) {
+            // Simulate file download
+            alert(`Mengunduh file: ${filename}\n\nCatatan: Ini adalah simulasi. Dalam implementasi nyata, file akan diunduh dari server.`);
+        }
+
+        // Module functions
+        function showModuleForm() {
+            document.getElementById('moduleForm').style.display = 'block';
+            editingModuleIndex = -1;
+            clearModuleForm();
+        }
+
+        function clearModuleForm() {
+            document.getElementById('moduleTitle').value = '';
+            document.getElementById('moduleDescription').value = '';
+            document.getElementById('moduleFile').value = '';
+        }
+
+        function saveModule() {
+            const title = document.getElementById('moduleTitle').value;
+            const description = document.getElementById('moduleDescription').value;
+            const file = document.getElementById('moduleFile').value;
+            
+            if (!title || !description || !file) {
+                alert('Harap isi semua field!');
+                return;
+            }
+            
+            if (!courseData[currentCourse]) {
+                alert('Error: Data mata kuliah tidak ditemukan!');
+                return;
+            }
+            
+            const newModule = { title, description, file };
+            courseData[currentCourse].modules.push(newModule);
+            
+            clearModuleForm();
+            document.getElementById('moduleForm').style.display = 'none';
+            
+            // Refresh course content
+            openCourse(currentCourse);
+        }
+
+        function deleteModule(index) {
+            if (confirm('Yakin ingin menghapus modul ini?')) {
+                courseData[currentCourse].modules.splice(index, 1);
+                openCourse(currentCourse); // Refresh content
+            }
+        }
+
+        function cancelModuleEdit() {
+            document.getElementById('moduleForm').style.display = 'none';
+            clearModuleForm();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close modal when clicking outside
+            document.getElementById('courseModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCourseModal();
+                }
+            });
+            
+            // Handle Enter key for login
+            document.getElementById('studentPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginStudent();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+                
