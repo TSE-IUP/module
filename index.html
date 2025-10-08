@@ -473,8 +473,7 @@
             line-height: 1.6;
         }
 
-        .delete-btn {
-            background: #e74c3c;
+        .delete-btn, .edit-btn {
             color: white;
             border: none;
             padding: 6px 12px;
@@ -482,11 +481,35 @@
             font-size: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-left: 5px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
         }
 
         .delete-btn:hover {
             background: #c0392b;
             transform: translateY(-1px);
+        }
+
+        .edit-btn {
+            background: #f39c12;
+        }
+
+        .edit-btn:hover {
+            background: #e67e22;
+            transform: translateY(-1px);
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .course-actions button {
+            flex: 1;
         }
 
         /* Course Grid */
@@ -793,6 +816,10 @@
                 width: 95%;
                 padding: 20px;
             }
+
+            .course-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -963,7 +990,7 @@
                         <div class="error-message" id="courseError"></div>
                         
                         <div class="edit-form" id="courseForm" style="display: none;">
-                            <h3 style="margin-bottom: 20px;">Tambah Mata Kuliah</h3>
+                            <h3 style="margin-bottom: 20px;" id="courseFormTitle">Tambah Mata Kuliah</h3>
                             <div class="form-group">
                                 <label class="form-label">Nama Mata Kuliah</label>
                                 <input type="text" class="form-input" id="courseName" placeholder="Nama mata kuliah">
@@ -992,30 +1019,27 @@
 
                 <!-- Sidebar Column -->
                 <div class="sidebar-column">
-  <!-- Pengumuman ringkas (hidden when Pengumuman is selected) -->
-  <div class="sidebar-card" id="sidebarAnnouncementsCard" style="display:none;">
-    <div class="sidebar-title">Pengumuman Terkini</div>
-    <div id="recentAnnouncements">
-      <div class="loading" style="padding: 20px;">Memuat...</div>
-    </div>
-  </div>
+                    <div class="sidebar-card" id="sidebarAnnouncementsCard" style="display:none;">
+                        <div class="sidebar-title">Pengumuman Terkini</div>
+                        <div id="recentAnnouncements">
+                            <div class="loading" style="padding: 20px;">Memuat...</div>
+                        </div>
+                    </div>
 
-  <!-- Jadwal Mendekat (hidden when Jadwal Kuliah is selected) -->
-  <div class="sidebar-card" id="sidebarScheduleCard">
-    <div class="sidebar-title">Jadwal Kuliah</div>
-    <div id="upcomingSchedule">
-      <div class="loading" style="padding: 20px;">Memuat...</div>
-    </div>
-  </div>
+                    <div class="sidebar-card" id="sidebarScheduleCard">
+                        <div class="sidebar-title">Jadwal Kuliah</div>
+                        <div id="upcomingSchedule">
+                            <div class="loading" style="padding: 20px;">Memuat...</div>
+                        </div>
+                    </div>
 
-  <!-- Mata Kuliah Diambil (hidden when Mata Kuliah is selected) -->
-  <div class="sidebar-card" id="sidebarCoursesCard">
-    <div class="sidebar-title">Mata Kuliah</div>
-    <div id="enrolledCourses">
-      <div class="loading" style="padding: 20px;">Memuat...</div>
-    </div>
-  </div>
-</div>
+                    <div class="sidebar-card" id="sidebarCoursesCard">
+                        <div class="sidebar-title">Mata Kuliah</div>
+                        <div id="enrolledCourses">
+                            <div class="loading" style="padding: 20px;">Memuat...</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1084,6 +1108,7 @@
         let isAdminMode = false;
         let currentCourseId = null;
         let currentCourseDbId = null;
+        let editingCourseId = null; // Track which course is being edited
 
         document.body.classList.add('login-page');
 
@@ -1151,9 +1176,7 @@
                     loadCourses(),
                     loadSidebarData()
                 ]);
-                // Default active tab is Pengumuman → sidebar should show Jadwal + Mata Kuliah
                 updateSidebar('announcements');
-
                 
             } catch (error) {
                 console.error('Login error:', error);
@@ -1179,7 +1202,6 @@
             document.querySelector('.header').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             
-            // Update user info in dropdown
             document.getElementById('userRole').textContent = isAdminMode ? 'Admin' : 'Student';
             document.getElementById('userEmail').textContent = currentUser.email;
             
@@ -1205,6 +1227,10 @@
             document.querySelectorAll('.delete-btn').forEach(el => {
                 el.style.display = 'inline-block';
             });
+
+            document.querySelectorAll('.edit-btn').forEach(el => {
+                el.style.display = 'inline-block';
+            });
             
             document.getElementById('addAnnouncementBtn').style.display = 'block';
             document.getElementById('addScheduleBtn').style.display = 'block';
@@ -1219,16 +1245,18 @@
             document.querySelectorAll('.delete-btn').forEach(el => {
                 el.style.display = 'none';
             });
+
+            document.querySelectorAll('.edit-btn').forEach(el => {
+                el.style.display = 'none';
+            });
             
             document.getElementById('addAnnouncementBtn').style.display = 'none';
             document.getElementById('addScheduleBtn').style.display = 'none';
             document.getElementById('addCourseBtn').style.display = 'none';
         }
 
-        // Load Sidebar Data
         async function loadSidebarData() {
             try {
-                // Load upcoming schedule
                 const { data: schedules, error: schedError } = await supabase
                     .from('schedules')
                     .select('*')
@@ -1246,7 +1274,6 @@
                     scheduleContainer.innerHTML = '<p style="color: #6c757d; text-align: center;">Tidak ada jadwal</p>';
                 }
 
-                // Load enrolled courses
                 const { data: courses, error: courseError } = await supabase
                     .from('courses')
                     .select('*')
@@ -1263,7 +1290,6 @@
                     courseContainer.innerHTML = '<p style="color: #6c757d; text-align: center;">Tidak ada mata kuliah</p>';
                 }
 
-                // Load recent announcements for sidebar
                 const recentContainer = document.getElementById('recentAnnouncements');
                 if (recentContainer) {
                   const { data: anns, error: annError } = await supabase
@@ -1512,7 +1538,12 @@
                         <div class="course-info">${escapeHtml(course.code)} • ${escapeHtml(course.lecturer)}</div>
                         <div class="course-description">${escapeHtml(course.description)}</div>
                         <button class="course-btn" onclick="openCourse('${course.id}', '${escapeHtml(course.course_id)}')">Akses Materi</button>
-                        ${isAdminMode ? `<button class="delete-btn" onclick="deleteCourse('${course.id}')" style="margin-top: 10px; width: 100%;">Hapus Mata Kuliah</button>` : ''}
+                        ${isAdminMode ? `
+                            <div class="course-actions">
+                                <button class="edit-btn" onclick="editCourse('${course.id}')">Ubah</button>
+                                <button class="delete-btn" onclick="deleteCourse('${course.id}')">Hapus</button>
+                            </div>
+                        ` : ''}
                     </div>
                 `).join('');
                 
@@ -1523,6 +1554,8 @@
         }
         
         function showCourseForm() {
+            editingCourseId = null;
+            document.getElementById('courseFormTitle').textContent = 'Tambah Mata Kuliah';
             document.getElementById('courseForm').style.display = 'block';
             document.getElementById('courseName').value = '';
             document.getElementById('courseCode').value = '';
@@ -1530,8 +1563,37 @@
             document.getElementById('courseDescription').value = '';
         }
         
+        async function editCourse(id) {
+            try {
+                const { data, error } = await supabase
+                    .from('courses')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                
+                editingCourseId = id;
+                document.getElementById('courseFormTitle').textContent = 'Ubah Mata Kuliah';
+                document.getElementById('courseForm').style.display = 'block';
+                document.getElementById('courseName').value = data.title;
+                document.getElementById('courseCode').value = data.code;
+                document.getElementById('courseLecturer').value = data.lecturer;
+                document.getElementById('courseDescription').value = data.description;
+                
+                // Scroll to form
+                document.getElementById('courseForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+            } catch (error) {
+                console.error('Edit course error:', error);
+                showError('courseError', 'Gagal memuat data mata kuliah: ' + error.message);
+            }
+        }
+        
         function cancelCourseEdit() {
+            editingCourseId = null;
             document.getElementById('courseForm').style.display = 'none';
+            document.getElementById('courseFormTitle').textContent = 'Tambah Mata Kuliah';
         }
         
         async function saveCourse() {
@@ -1545,23 +1607,39 @@
                 return;
             }
             
-            const courseId = name.toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '');
-            
             try {
-                const { error } = await supabase
-                    .from('courses')
-                    .insert([{
-                        course_id: courseId,
-                        title: name,
-                        code: code,
-                        lecturer: lecturer,
-                        description: description,
-                        created_by: currentUser.id
-                    }]);
-                
-                if (error) throw error;
+                if (editingCourseId) {
+                    // Update existing course
+                    const { error } = await supabase
+                        .from('courses')
+                        .update({
+                            title: name,
+                            code: code,
+                            lecturer: lecturer,
+                            description: description
+                        })
+                        .eq('id', editingCourseId);
+                    
+                    if (error) throw error;
+                } else {
+                    // Insert new course
+                    const courseId = name.toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^a-z0-9-]/g, '');
+                    
+                    const { error } = await supabase
+                        .from('courses')
+                        .insert([{
+                            course_id: courseId,
+                            title: name,
+                            code: code,
+                            lecturer: lecturer,
+                            description: description,
+                            created_by: currentUser.id
+                        }]);
+                    
+                    if (error) throw error;
+                }
                 
                 await loadCourses();
                 await loadSidebarData();
@@ -1803,28 +1881,23 @@
         }
 
         function showSection(sectionName) {
-  // Hide all main sections
-  document.querySelectorAll('.content-section').forEach(section => {
-    section.style.display = 'none';
-  });
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
 
-  // Update active tab styling
-  document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
 
-  // Show selected section
-  const active = document.getElementById(sectionName);
-  if (active) active.style.display = 'block';
+            const active = document.getElementById(sectionName);
+            if (active) active.style.display = 'block';
 
-  // Add 'active' to the clicked tab if available
-  if (typeof event !== 'undefined' && event.target && event.target.classList) {
-    event.target.classList.add('active');
-  }
+            if (typeof event !== 'undefined' && event.target && event.target.classList) {
+                event.target.classList.add('active');
+            }
 
-  // Update sidebar to show unselected sections
-  updateSidebar(sectionName);
-}
+            updateSidebar(sectionName);
+        }
 
         function showError(elementId, message) {
             const errorEl = document.getElementById(elementId);
@@ -1895,32 +1968,27 @@
                 login();
             }
         });
-    
 
-function updateSidebar(active) {
-  const show = (id, on) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = on ? 'block' : 'none';
-  };
+        function updateSidebar(active) {
+            const show = (id, on) => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = on ? 'block' : 'none';
+            };
 
-  if (active === 'announcements') {
-    // Showing Pengumuman main → sidebar shows Jadwal + Mata Kuliah
-    show('sidebarAnnouncementsCard', false);
-    show('sidebarScheduleCard', true);
-    show('sidebarCoursesCard', true);
-  } else if (active === 'schedule') {
-    // Showing Jadwal main → sidebar shows Pengumuman + Mata Kuliah
-    show('sidebarAnnouncementsCard', true);
-    show('sidebarScheduleCard', false);
-    show('sidebarCoursesCard', true);
-  } else if (active === 'courses') {
-    // Showing Mata Kuliah main → sidebar shows Pengumuman + Jadwal
-    show('sidebarAnnouncementsCard', true);
-    show('sidebarScheduleCard', true);
-    show('sidebarCoursesCard', false);
-  }
-}
-
-</script>
+            if (active === 'announcements') {
+                show('sidebarAnnouncementsCard', false);
+                show('sidebarScheduleCard', true);
+                show('sidebarCoursesCard', true);
+            } else if (active === 'schedule') {
+                show('sidebarAnnouncementsCard', true);
+                show('sidebarScheduleCard', false);
+                show('sidebarCoursesCard', true);
+            } else if (active === 'courses') {
+                show('sidebarAnnouncementsCard', true);
+                show('sidebarScheduleCard', true);
+                show('sidebarCoursesCard', false);
+            }
+        }
+    </script>
 </body>
 </html>
