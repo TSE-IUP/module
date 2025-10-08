@@ -696,10 +696,32 @@
                         <label class="form-label">Deskripsi Modul</label>
                         <textarea class="form-textarea" id="moduleDescription" placeholder="Deskripsi modul"></textarea>
                     </div>
+                    
+                    <!-- NEW: File upload section -->
                     <div class="form-group">
-                        <label class="form-label">Link File/Materi</label>
-                        <input type="text" class="form-input" id="moduleFile" placeholder="URL file atau materi (gunakan '#' untuk placeholder)">
+                        <label class="form-label">Upload File PDF</label>
+                        <input type="file" class="form-input" id="moduleFileUpload" accept=".pdf" style="padding: 8px;">
+                        <small style="color: #7f8c8d; display: block; margin-top: 5px;">
+                            Atau gunakan link eksternal di bawah ini
+                        </small>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Link File/Materi (Opsional)</label>
+                        <input type="text" class="form-input" id="moduleFile" placeholder="Atau masukkan URL file eksternal">
+                        <small style="color: #7f8c8d; display: block; margin-top: 5px;">
+                            Kosongkan jika sudah upload file di atas
+                        </small>
+                    </div>
+                    
+                    <!-- NEW: Upload progress indicator -->
+                    <div id="uploadProgress" style="display: none; margin-bottom: 15px;">
+                        <div style="background: #e0e0e0; border-radius: 10px; height: 20px; overflow: hidden;">
+                            <div id="progressBar" style="background: linear-gradient(45deg, #00b894, #00a085); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                        </div>
+                        <small id="progressText" style="color: #7f8c8d; display: block; margin-top: 5px;">Mengupload...</small>
+                    </div>
+                    
                     <button class="save-btn" onclick="saveModule()">Simpan Modul</button>
                     <button class="add-btn" onclick="cancelModuleEdit()">Batal</button>
                 </div>
@@ -1226,16 +1248,26 @@
             document.getElementById('moduleTitle').value = '';
             document.getElementById('moduleDescription').value = '';
             document.getElementById('moduleFile').value = '';
+            document.getElementById('moduleFileUpload').value = ''; // Clear file input
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('progressBar').style.width = '0%';
         }
         
         function cancelModuleEdit() {
             document.getElementById('moduleForm').style.display = 'none';
+            document.getElementById('moduleTitle').value = '';
+            document.getElementById('moduleDescription').value = '';
+            document.getElementById('moduleFile').value = '';
+            document.getElementById('moduleFileUpload').value = ''; // Clear file input
+            document.getElementById('uploadProgress').style.display = 'none'; // Hide progress
+            document.getElementById('progressBar').style.width = '0%';
         }
         
         async function saveModule() {
             const title = document.getElementById('moduleTitle').value.trim();
             const description = document.getElementById('moduleDescription').value.trim();
-            const file = document.getElementById('moduleFile').value.trim() || '#';
+            const fileInput = document.getElementById('moduleFileUpload');
+            const fileUrl = document.getElementById('moduleFile').value.trim();
             
             if (!title || !description) {
                 showError('moduleError', 'Harap isi judul dan deskripsi modul!');
@@ -1247,7 +1279,70 @@
                 return;
             }
             
+            let finalFileLink = '#'; // Default placeholder
+            
             try {
+                // Check if user uploaded a file
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    
+                    // Validate file type
+                    if (file.type !== 'application/pdf') {
+                        showError('moduleError', 'Hanya file PDF yang diperbolehkan!');
+                        return;
+                    }
+                    
+                    // Validate file size (max 10MB)
+                    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                    if (file.size > maxSize) {
+                        showError('moduleError', 'Ukuran file terlalu besar! Maksimal 10MB.');
+                        return;
+                    }
+                    
+                    // Show upload progress
+                    document.getElementById('uploadProgress').style.display = 'block';
+                    document.getElementById('progressText').textContent = 'Mengupload file...';
+                    document.getElementById('progressBar').style.width = '30%';
+                    
+                    // Generate unique filename
+                    const timestamp = Date.now();
+                    const sanitizedTitle = title.toLowerCase()
+                        .replace(/[^a-z0-9]/g, '-')
+                        .replace(/-+/g, '-')
+                        .substring(0, 50);
+                    const fileName = `${timestamp}_${sanitizedTitle}.pdf`;
+                    const filePath = `modules/${fileName}`;
+                    
+                    // Upload to Supabase Storage
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('course-materials')
+                        .upload(filePath, file, {
+                            cacheControl: '3600',
+                            upsert: false
+                        });
+                    
+                    if (uploadError) throw uploadError;
+                    
+                    document.getElementById('progressBar').style.width = '70%';
+                    
+                    // Get public URL
+                    const { data: urlData } = supabase.storage
+                        .from('course-materials')
+                        .getPublicUrl(filePath);
+                    
+                    finalFileLink = urlData.publicUrl;
+                    
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('progressText').textContent = 'Upload berhasil!';
+                    
+                } else if (fileUrl) {
+                    // User provided external URL instead
+                    finalFileLink = fileUrl;
+                } else {
+                    // Neither file nor URL provided - use placeholder
+                    finalFileLink = '#';
+                }
+                
                 // Get current max order_index
                 const { data: existingModules, error: fetchError } = await supabase
                     .from('modules')
@@ -1262,18 +1357,23 @@
                     ? existingModules[0].order_index + 1 
                     : 1;
                 
+                // Insert module into database
                 const { error } = await supabase
                     .from('modules')
                     .insert([{
                         course_id: currentCourseDbId,
                         title: title,
                         description: description,
-                        file_link: file,
+                        file_link: finalFileLink,
                         order_index: nextOrder,
                         created_by: currentUser.id
                     }]);
                 
                 if (error) throw error;
+                
+                // Hide upload progress
+                document.getElementById('uploadProgress').style.display = 'none';
+                document.getElementById('progressBar').style.width = '0%';
                 
                 // Reload course content
                 await openCourse(currentCourseDbId, currentCourseId);
@@ -1282,6 +1382,7 @@
                 
             } catch (error) {
                 console.error('Save module error:', error);
+                document.getElementById('uploadProgress').style.display = 'none';
                 showError('moduleError', 'Gagal menyimpan modul: ' + error.message);
             }
         }
