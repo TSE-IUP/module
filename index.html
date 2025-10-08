@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pembelajaran Online -International University of Papua</title>
+    <title>Sistem Pembelajaran Online - International University of Papua</title>
     <style>
         * {
             margin: 0;
@@ -12,21 +12,28 @@
         }
 
         body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-image: url('https://vahatmjmttmnhcadrnpl.supabase.co/storage/v1/object/public/Logo/IUP-LOGO-TIPE-B.jpg');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                min-height: 100vh;
-                line-height: 1.6;
-            }
-            
-            /* Add this to make content cards stand out more */
-            .header, .content-section {
-                backdrop-filter: blur(10px);
-                background: rgba(255, 255, 255, 0.95) !important;
-            }
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)),
+                url('https://vahatmjmttmnhcadrnpl.supabase.co/storage/v1/object/public/Logo/IUP-LOGO-TIPE-B.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        body.login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header, .content-section {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
 
         .container {
             max-width: 1200px;
@@ -35,33 +42,48 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 500px;
+            padding: 50px 40px;
             text-align: center;
+            margin: 0 auto;
+        }
+
+        .logo {
+            margin-bottom: 25px;
+        }
+
+        .logo img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        .welcome-section {
+            margin-bottom: 30px;
         }
 
         .header h1 {
             color: #2c3e50;
-            font-size: 2.5em;
+            font-size: 1.5em;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            line-height: 1.3;
         }
 
         .header .subtitle {
-            color: #7f8c8d;
-            font-size: 1.2em;
+            color: #6c757d;
+            font-size: 1em;
             margin-bottom: 20px;
         }
 
         .login-section {
-            background: rgba(52, 152, 219, 0.1);
-            border: 2px solid #3498db;
-            border-radius: 15px;
-            padding: 20px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 30px;
             margin-bottom: 20px;
         }
 
@@ -84,35 +106,96 @@
 
         .form-input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #bdc3c7;
-            border-radius: 10px;
-            font-size: 16px;
+            padding: 14px 18px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 15px;
             margin-bottom: 15px;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: white;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #1a4d7a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26, 77, 122, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #adb5bd;
         }
 
         .login-btn, .admin-btn {
-            background: linear-gradient(45deg, #3498db, #2980b9);
+            width: 100%;
+            background: #1a4d7a;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 6px;
             font-size: 16px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            width: 100%;
             transition: all 0.3s ease;
         }
 
         .login-btn:hover, .admin-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+            background: #143d5f;
+            box-shadow: 0 4px 15px rgba(26, 77, 122, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a4d7a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .demo-credentials {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .demo-credentials p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .demo-credentials strong {
+            color: #495057;
         }
 
         .main-content {
@@ -486,8 +569,20 @@
                 padding: 10px;
             }
             
+            .header {
+                padding: 40px 25px;
+            }
+            
             .header h1 {
-                font-size: 2em;
+                font-size: 1.3em;
+            }
+            
+            .logo img {
+                max-width: 150px;
+            }
+            
+            .login-section {
+                padding: 25px 20px;
             }
             
             .nav-tabs {
@@ -522,17 +617,46 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🎓 Welcome to Technology for Smart Education (TSE)</h1>
-            <div class="subtitle">International University of Papua</div>
+            <!-- Logo -->
+            <div class="logo">
+                <img src="https://vahatmjmttmnhcadrnpl.supabase.co/storage/v1/object/public/Logo/IUP-LOGO-TIPE-B.jpg" alt="IUP Logo">
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1>🎓 Welcome to Technology for Smart Education (TSE)</h1>
+                <div class="subtitle">International University of Papua</div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="loginError"></div>
+
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Logging in...</p>
+            </div>
             
-            <div class="login-section">
-                <div class="login-title">Masuk ke Sistem</div>
-                <div class="error-message" id="loginError"></div>
-                <input type="email" class="form-input" id="loginEmail" placeholder="Email">
-                <input type="password" class="form-input" id="loginPassword" placeholder="Password">
-                <button class="login-btn" onclick="login()">Masuk</button>
-                <p style="color: #7f8c8d; margin-top: 15px; font-size: 0.9em;">
-                    Untuk Login: student@iup.ac.id / student123! (mahasiswa)
+            <div class="login-section" id="loginSection">
+                <!-- Email -->
+                <div class="form-group">
+                    <input type="email" class="form-input" id="loginEmail" placeholder="Username or Email" autocomplete="email" required>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Password" autocomplete="current-password" required>
+                </div>
+
+                <!-- Login Button -->
+                <button class="login-btn" id="loginButton" onclick="login()">Masuk</button>
+            </div>
+
+            <!-- Demo Credentials -->
+            <div class="demo-credentials">
+                <p>
+                    <strong>Login untuk mahasiswa:</strong><br>
+                    student@iup.ac.id / student123!
                 </p>
             </div>
             
@@ -697,7 +821,6 @@
                         <textarea class="form-textarea" id="moduleDescription" placeholder="Deskripsi modul"></textarea>
                     </div>
                     
-                    <!-- NEW: File upload section -->
                     <div class="form-group">
                         <label class="form-label">Upload File PDF</label>
                         <input type="file" class="form-input" id="moduleFileUpload" accept=".pdf" style="padding: 8px;">
@@ -714,7 +837,6 @@
                         </small>
                     </div>
                     
-                    <!-- NEW: Upload progress indicator -->
                     <div id="uploadProgress" style="display: none; margin-bottom: 15px;">
                         <div style="background: #e0e0e0; border-radius: 10px; height: 20px; overflow: hidden;">
                             <div id="progressBar" style="background: linear-gradient(45deg, #00b894, #00a085); height: 100%; width: 0%; transition: width 0.3s;"></div>
@@ -736,11 +858,9 @@
     
     <script>
         // ==================== CONFIGURATION ====================
-        // TODO: Replace these with your actual Supabase credentials
         const SUPABASE_URL = 'https://vahatmjmttmnhcadrnpl.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhaGF0bWptdHRtbmhjYWRybnBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MDQwNTgsImV4cCI6MjA3NTA4MDA1OH0._twKPzBrJKPEIZ9fC6-t5e_uxI5gqU_JPf0V_oudFXo';
         
-        // Initialize Supabase client
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // ==================== GLOBAL STATE ====================
@@ -748,6 +868,9 @@
         let isAdminMode = false;
         let currentCourseId = null;
         let currentCourseDbId = null;
+
+        // Add login page class on initial load
+        document.body.classList.add('login-page');
 
         // ==================== AUTH FUNCTIONS ====================
         
@@ -760,8 +883,12 @@
                 return;
             }
             
+            // Show loading spinner
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'block';
+            hideError('loginError');
+            
             try {
-                // Sign in with Supabase Auth
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -771,7 +898,6 @@
                 
                 currentUser = data.user;
                 
-                // Check if user is admin
                 const { data: roleData, error: roleError } = await supabase
                     .from('user_roles')
                     .select('role')
@@ -784,15 +910,14 @@
                 
                 isAdminMode = roleData && roleData.role === 'admin';
                 
-                // Clear login form
                 document.getElementById('loginEmail').value = '';
                 document.getElementById('loginPassword').value = '';
                 hideError('loginError');
                 
-                // Show main content
+                document.body.classList.remove('login-page');
+                
                 showMainContent();
                 
-                // Load all data
                 await Promise.all([
                     loadAnnouncements(),
                     loadSchedules(),
@@ -802,6 +927,8 @@
             } catch (error) {
                 console.error('Login error:', error);
                 showError('loginError', 'Login gagal: ' + error.message);
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('loadingSpinner').style.display = 'none';
             }
         }
         
@@ -828,16 +955,18 @@
         }
         
         function hideMainContent() {
+            document.body.classList.add('login-page');
             document.querySelector('.header').style.display = 'block';
             document.getElementById('mainContent').style.display = 'none';
             document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'none';
             hideAdminControls();
         }
         
         function showAdminControls() {
             document.getElementById('adminControls').style.display = 'block';
             
-            // Show admin-only elements
             document.querySelectorAll('.admin-only').forEach(el => {
                 el.style.display = 'table-cell';
             });
@@ -930,10 +1059,7 @@
                 
                 if (error) throw error;
                 
-                // Reload announcements
                 await loadAnnouncements();
-                
-                // Hide form
                 cancelAnnouncementEdit();
                 hideError('announcementError');
                 
@@ -954,7 +1080,6 @@
                 
                 if (error) throw error;
                 
-                // Reload announcements
                 await loadAnnouncements();
                 
             } catch (error) {
@@ -981,7 +1106,6 @@
                     return;
                 }
                 
-                // Sort by day order
                 const dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 data.sort((a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day));
                 
@@ -1125,7 +1249,6 @@
                 return;
             }
             
-            // Generate course_id slug
             const courseId = name.toLowerCase()
                 .replace(/\s+/g, '-')
                 .replace(/[^a-z0-9-]/g, '');
@@ -1180,7 +1303,6 @@
             currentCourseId = courseId;
             
             try {
-                // Get course details
                 const { data: courseData, error: courseError } = await supabase
                     .from('courses')
                     .select('*')
@@ -1191,7 +1313,6 @@
                 
                 document.getElementById('modalTitle').textContent = courseData.title;
                 
-                // Get modules
                 const { data: modules, error: modulesError } = await supabase
                     .from('modules')
                     .select('*')
@@ -1248,7 +1369,7 @@
             document.getElementById('moduleTitle').value = '';
             document.getElementById('moduleDescription').value = '';
             document.getElementById('moduleFile').value = '';
-            document.getElementById('moduleFileUpload').value = ''; // Clear file input
+            document.getElementById('moduleFileUpload').value = '';
             document.getElementById('uploadProgress').style.display = 'none';
             document.getElementById('progressBar').style.width = '0%';
         }
@@ -1258,8 +1379,8 @@
             document.getElementById('moduleTitle').value = '';
             document.getElementById('moduleDescription').value = '';
             document.getElementById('moduleFile').value = '';
-            document.getElementById('moduleFileUpload').value = ''; // Clear file input
-            document.getElementById('uploadProgress').style.display = 'none'; // Hide progress
+            document.getElementById('moduleFileUpload').value = '';
+            document.getElementById('uploadProgress').style.display = 'none';
             document.getElementById('progressBar').style.width = '0%';
         }
         
@@ -1279,32 +1400,27 @@
                 return;
             }
             
-            let finalFileLink = '#'; // Default placeholder
+            let finalFileLink = '#';
             
             try {
-                // Check if user uploaded a file
                 if (fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
                     
-                    // Validate file type
                     if (file.type !== 'application/pdf') {
                         showError('moduleError', 'Hanya file PDF yang diperbolehkan!');
                         return;
                     }
                     
-                    // Validate file size (max 10MB)
-                    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                    const maxSize = 10 * 1024 * 1024;
                     if (file.size > maxSize) {
                         showError('moduleError', 'Ukuran file terlalu besar! Maksimal 10MB.');
                         return;
                     }
                     
-                    // Show upload progress
                     document.getElementById('uploadProgress').style.display = 'block';
                     document.getElementById('progressText').textContent = 'Mengupload file...';
                     document.getElementById('progressBar').style.width = '30%';
                     
-                    // Generate unique filename
                     const timestamp = Date.now();
                     const sanitizedTitle = title.toLowerCase()
                         .replace(/[^a-z0-9]/g, '-')
@@ -1313,7 +1429,6 @@
                     const fileName = `${timestamp}_${sanitizedTitle}.pdf`;
                     const filePath = `modules/${fileName}`;
                     
-                    // Upload to Supabase Storage
                     const { data: uploadData, error: uploadError } = await supabase.storage
                         .from('course-materials')
                         .upload(filePath, file, {
@@ -1325,7 +1440,6 @@
                     
                     document.getElementById('progressBar').style.width = '70%';
                     
-                    // Get public URL
                     const { data: urlData } = supabase.storage
                         .from('course-materials')
                         .getPublicUrl(filePath);
@@ -1336,14 +1450,9 @@
                     document.getElementById('progressText').textContent = 'Upload berhasil!';
                     
                 } else if (fileUrl) {
-                    // User provided external URL instead
                     finalFileLink = fileUrl;
-                } else {
-                    // Neither file nor URL provided - use placeholder
-                    finalFileLink = '#';
                 }
                 
-                // Get current max order_index
                 const { data: existingModules, error: fetchError } = await supabase
                     .from('modules')
                     .select('order_index')
@@ -1357,7 +1466,6 @@
                     ? existingModules[0].order_index + 1 
                     : 1;
                 
-                // Insert module into database
                 const { error } = await supabase
                     .from('modules')
                     .insert([{
@@ -1371,11 +1479,9 @@
                 
                 if (error) throw error;
                 
-                // Hide upload progress
                 document.getElementById('uploadProgress').style.display = 'none';
                 document.getElementById('progressBar').style.width = '0%';
                 
-                // Reload course content
                 await openCourse(currentCourseDbId, currentCourseId);
                 cancelModuleEdit();
                 hideError('moduleError');
@@ -1398,7 +1504,6 @@
                 
                 if (error) throw error;
                 
-                // Reload course content
                 await openCourse(currentCourseDbId, currentCourseId);
                 
             } catch (error) {
@@ -1410,20 +1515,15 @@
         // ==================== NAVIGATION ====================
         
         function showSection(sectionName) {
-            // Hide all sections
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Remove active class from all tabs
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Show selected section
             document.getElementById(sectionName).classList.add('active');
-            
-            // Add active class to clicked tab
             event.target.classList.add('active');
         }
 
@@ -1434,7 +1534,6 @@
             errorEl.textContent = message;
             errorEl.style.display = 'block';
             
-            // Auto-hide after 5 seconds
             setTimeout(() => {
                 hideError(elementId);
             }, 5000);
@@ -1459,11 +1558,10 @@
 
         // ==================== INIT & EVENT LISTENERS ====================
         
-        // Check for existing session on page load
         supabase.auth.getSession().then(({ data: { session } }) => {
             if (session) {
                 currentUser = session.user;
-                // Check admin role and load content
+                document.body.classList.remove('login-page');
                 supabase
                     .from('user_roles')
                     .select('role')
@@ -1481,7 +1579,6 @@
             }
         });
         
-        // Listen for auth state changes
         supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_OUT') {
                 currentUser = null;
@@ -1490,21 +1587,18 @@
             }
         });
         
-        // Close modal when clicking outside
         document.getElementById('courseModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeCourseModal();
             }
         });
         
-        // Handle Enter key for login
         document.getElementById('loginPassword').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 login();
             }
         });
         
-        // Configuration check on load
         if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY_HERE') {
             console.error('⚠️ KONFIGURASI BELUM LENGKAP!');
             console.error('Silakan ganti SUPABASE_URL dan SUPABASE_ANON_KEY di bagian CONFIGURATION pada file ini.');
